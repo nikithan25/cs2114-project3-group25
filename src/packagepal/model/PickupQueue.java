@@ -134,7 +134,6 @@ public class PickupQueue<T> {
             current = current.next;
         }
         return list;
-        
     }
 
 }
