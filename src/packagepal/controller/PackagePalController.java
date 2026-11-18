@@ -102,6 +102,10 @@ public class PackagePalController
         {
             view.showError("No matching package was found.");
         }
+        else if (result.getStatus() == CheckInStatus.ALREADY_PICKED_UP)
+        {
+            view.showError("This package has already been picked up.");
+        }
     }
 
 

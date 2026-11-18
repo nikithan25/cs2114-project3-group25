@@ -21,5 +21,8 @@ public enum CheckInStatus {
 
     /** No package was found for this student and 
      * package ID. */
-    NO_PACKAGE
+    NO_PACKAGE,
+    
+    /** The package was already picked up. */
+    ALREADY_PICKED_UP
 }

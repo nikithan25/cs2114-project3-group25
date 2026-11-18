@@ -42,7 +42,7 @@ public class CheckInResult
      * getter method for studentsAhead
      * @return the number of students ahead 
      */
-    public int studentsAhead() {
+    public int getStudentsAhead() {
         return studentsAhead;
     }
 
