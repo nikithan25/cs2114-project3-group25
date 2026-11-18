@@ -48,9 +48,9 @@ We will run PackagePalApp and check in two students with normal requests, then v
 
 **Who does what:**
 
-Implement the stretch goals: Nikitha 
-Write the remaining test cases: Colin
-Final README updates: Zenoor
+1. Implement the stretch goals: Nikitha
+2. Write the remaining test cases: Colin
+3. Final README updates: Zenoor
 
 
 **3. Attribution & GenAI Note:**
