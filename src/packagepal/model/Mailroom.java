@@ -3,47 +3,56 @@ package packagepal.model;
 import java.util.ArrayList;
 import java.util.List;
 
+// -------------------------------------------------------------------------
+/**
+ * The central model class. Stores package records and the line of
+ * students waiting to pick up their packages.
+ *
+ * @author Nikitha Nivas
+ * @version 2026.11.17
+ */
 public class Mailroom
 {
 
-//~Fields .................
-ArrayList<Package> packages;
-PickupQueue<PickupRequest> waitingQueue;
+    //~Fields .................
+    private ArrayList<Package> packages;
+    private PickupQueue<PickupRequest> waitingQueue;
 
-//~Constructor .................
-// ----------------------------------------------------------
-/**
- * Create a new Mailroom object.
- */
-public Mailroom() {
-    packages = new ArrayList<>();
-    waitingQueue = new PickupQueue<>();
-}
+    //~Constructor .................
+    // ----------------------------------------------------------
+    /**
+     * Create a new Mailroom object.
+     */
+    public Mailroom() {
+        packages = new ArrayList<>();
+        waitingQueue = new PickupQueue<>();
+    }
 
-//~Public  Methods ........
+    //~Public  Methods ........
 
-   // ----------------------------------------------------------
-   /**
-   * This method adds a new package 
-   * @param pkg the package to be added 
-   */
+    // ----------------------------------------------------------
+    /**
+     * This method adds a new package
+     * @param pkg the package to be added
+     */
     public void addPackage(Package pkg) {
         if (pkg == null) {
             throw new IllegalArgumentException("Package cannot be null");
         }
         if (findPackage(pkg.getPackageID()) != null) {
             throw new IllegalArgumentException(
-                "A package with that package ID already exists"); 
+                "A package with that package ID already exists");
         }
         packages.add(pkg);
     }
-    
+
+    // ----------------------------------------------------------
     /**
-     * Checks a student in for pickup. Verifies the 
+     * Checks a student in for pickup. Verifies the
      * student has a package
-     * under that ID, checks whether they 
+     * under that ID, checks whether they
      * are already waiting, checks
-     * readiness, and adds a valid request 
+     * readiness, and adds a valid request
      * to the back of the line.
      *
      * @param studentName the student checking in
@@ -53,20 +62,44 @@ public Mailroom() {
      * @throws IllegalArgumentException if either argument is null or blank
      */
     public CheckInResult checkIn(String studentName, String packageID) {
+        return checkIn(studentName, packageID, false);
+    }
+
+    // ----------------------------------------------------------
+    /**
+     * Checks a student in for pickup, as either a normal or an urgent
+     * request. Runs the same checks as a normal check-in. An urgent
+     * request goes ahead of all normal requests but behind any urgent
+     * requests that checked in earlier. A normal request goes to the
+     * back of the line.
+     *
+     * @param studentName the student checking in
+     * @param packageID the package ID they are picking up
+     * @param urgent true if this request should go ahead of
+     *        normal requests
+     * @return the outcome and the number of students ahead
+     *         (-1 when the student was not placed in line)
+     * @throws IllegalArgumentException if either argument is null or blank
+     */
+    public CheckInResult checkIn(String studentName, String packageID,
+        boolean urgent) {
         if (studentName == null || studentName.isBlank()) {
-            throw new IllegalArgumentException("Student name cannot be null or blank");
+            throw new IllegalArgumentException(
+                "Student name cannot be null or blank");
         }
         if (packageID == null || packageID.isBlank()) {
-            throw new IllegalArgumentException("Package ID cannot be null or blank");
+            throw new IllegalArgumentException(
+                "Package ID cannot be null or blank");
         }
-        
+
         Package pkg = findPackage(packageID);
-        if (pkg == null || !pkg.getStudentName().equalsIgnoreCase(studentName)) {
+        if (pkg == null
+            || !pkg.getStudentName().equalsIgnoreCase(studentName)) {
             return new CheckInResult(CheckInStatus.NO_PACKAGE, -1);
         }
-        
+
         int position = positionOfPackage(packageID);
-        
+
         if (position != -1) {
             return new CheckInResult(CheckInStatus.ALREADY_WAITING, position);
         }
@@ -78,12 +111,20 @@ public Mailroom() {
         if (pkg.getStatus() == PackageStatus.PICKED_UP) {
             return new CheckInResult(CheckInStatus.ALREADY_PICKED_UP, -1);
         }
-        
-        int studentsAhead = waitingQueue.size();
-        waitingQueue.enqueue(new PickupRequest(pkg));
+
+        PickupRequest request = new PickupRequest(pkg, urgent);
+        if (urgent) {
+            waitingQueue.enqueuePriority(request);
+        }
+        else {
+            waitingQueue.enqueue(request);
+        }
+
+        int studentsAhead = positionOfPackage(packageID);
         return new CheckInResult(CheckInStatus.ADDED, studentsAhead);
     }
-    
+
+    // ----------------------------------------------------------
     /**
      * Serves the student at the front of the line and marks their
      * package as picked up.
@@ -99,7 +140,7 @@ public Mailroom() {
         return request;
     }
 
-
+    // ----------------------------------------------------------
     /**
      * Returns the students waiting, front of the line first.
      * Changing the returned list does not affect the line.
@@ -110,7 +151,7 @@ public Mailroom() {
         return waitingQueue.toList();
     }
 
-
+    // ----------------------------------------------------------
     /**
      * Returns the number of students waiting in line.
      *
@@ -120,7 +161,7 @@ public Mailroom() {
         return waitingQueue.size();
     }
 
-
+    // ----------------------------------------------------------
     /**
      * Finds how many students are ahead of the given student.
      * Name matching ignores case, the same as checkIn.
@@ -131,7 +172,8 @@ public Mailroom() {
      */
     public int getPosition(String studentName) {
         if (studentName == null || studentName.isBlank()) {
-            throw new IllegalArgumentException("Student name cannot be null or blank");
+            throw new IllegalArgumentException(
+                "Student name cannot be null or blank");
         }
         List<PickupRequest> line = waitingQueue.toList();
         for (int i = 0; i < line.size(); i++) {
@@ -143,7 +185,7 @@ public Mailroom() {
         return -1;
     }
 
-
+    // ----------------------------------------------------------
     /**
      * Marks a package as ready for pickup. Only a package that is
      * currently NOT_READY can be marked ready.
@@ -155,7 +197,8 @@ public Mailroom() {
      */
     public boolean markReady(String packageID) {
         if (packageID == null || packageID.isBlank()) {
-            throw new IllegalArgumentException("Package ID cannot be null or blank");
+            throw new IllegalArgumentException(
+                "Package ID cannot be null or blank");
         }
         Package pkg = findPackage(packageID);
         if (pkg == null || pkg.getStatus() != PackageStatus.NOT_READY) {
@@ -164,9 +207,8 @@ public Mailroom() {
         pkg.setStatus(PackageStatus.READY);
         return true;
     }
-    
-    
-    
+
+    // ----------------------------------------------------------
     /**
      * Finds the package with the given ID.
      *
@@ -181,7 +223,8 @@ public Mailroom() {
         }
         return null;
     }
-    
+
+    // ----------------------------------------------------------
     /**
      * Finds how many requests are ahead of the request for a package.
      *

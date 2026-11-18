@@ -14,20 +14,32 @@ public class PickupRequest
 {
     //~ Fields ..............
     private final Package pkg;
+    private final boolean isUrgent;
     
 
     // ----------------------------------------------------------
     /**
      * Create a new PickupRequest object.
      * @param pkg the package being requested 
-     * @throws IllegalArgumentException if package is null
      */
     //~ Constructors ........
-    public PickupRequest (Package pkg) {
+    public PickupRequest(Package pkg) {
+        this(pkg, false);
+    }
+    
+    // ----------------------------------------------------------
+    /**
+     * Create a new PickupRequest object with a priority level. 
+     * @param pkg the package being requested
+     * @param urgent true of this package is a priority
+     * @throws IllegalArgumentException if package is null
+     */
+    public PickupRequest (Package pkg, boolean urgent) {
         if (pkg == null) {
             throw new IllegalArgumentException("package cannot be null");
         }
         this.pkg = pkg;
+        this.isUrgent = urgent;
     }
     
     //~Public  Methods ......
@@ -38,6 +50,15 @@ public class PickupRequest
      */
     public Package getPackage() {
         return pkg;
+    }
+    
+    // ----------------------------------------------------------
+    /**
+     * getter method for isUrgent
+     * @return whether the package is urgent or not
+     */
+    public boolean getIsUrgent() {
+        return isUrgent;
     }
 
 }

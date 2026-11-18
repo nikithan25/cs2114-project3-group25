@@ -31,6 +31,7 @@ public class PickupQueue<T> {
     private Node<T> head; // front of the line (next to be served)
     private Node<T> tail; // back of the line (most recently added)
     private int size;
+    private Node<T> lastPriority; // last urgent item in line, or null if none
     
     // ----------------------------------------------------------
     /**
@@ -40,6 +41,7 @@ public class PickupQueue<T> {
         head = null;
         tail = null;
         size = 0;
+        lastPriority = null;
     }
     
     
@@ -77,10 +79,16 @@ public class PickupQueue<T> {
             throw new NoSuchElementException("Cannot remove from an empty queue");
         }
         T item = head.data;
+        if (head == lastPriority) {
+            lastPriority = null;
+        }
+        
         head = head.next;
+        
         if (head == null) {
             tail = null; 
         }
+        
         size--;
         return item;  
     }
@@ -135,7 +143,38 @@ public class PickupQueue<T> {
         }
         return list;
     }
+    
+    // ----------------------------------------------------------
+    /**
+     * Adds an urgent item to the queue. It goes ahead of all
+     * normal items but behind any urgent items added earlier.
+     * @param item the item to add
+     * @throws IllegalArgumentException if item is null
+     */
+    public void enqueuePriority(T item) {
+        if (item == null) {
+            throw new IllegalArgumentException("Cannot enqueue a null item");
+        }
+        
+        Node<T> newNode = new Node<>(item);
+        
+        if (lastPriority == null) {
+            newNode.next = head;
+            head = newNode;
+        }
+        
+        else {
+            newNode.next = lastPriority.next;
+            lastPriority.next = newNode;
+        }
+        
+        if (newNode.next == null) {
+            tail = newNode;
+        }
+        
+        lastPriority = newNode;
+        size++; 
+        
+    }
 
 }
-
-
