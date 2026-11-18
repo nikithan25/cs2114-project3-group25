@@ -38,6 +38,12 @@ public class PackagePalApp
                 "P200",
                 "Jordan",
                 PackageStatus.NOT_READY));
+        
+        mailroom.addPackage(
+            new Package("P300", "Cara", PackageStatus.READY));
+
+        mailroom.addPackage(
+            new Package("P400", "Bob", PackageStatus.READY));
 
         controller.run();
     }

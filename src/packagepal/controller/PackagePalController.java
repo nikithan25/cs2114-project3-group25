@@ -10,7 +10,7 @@ import packagepal.view.ConsoleView;
  * Connects the PackagePal view and model.
  *
  * @author Colin Fahmy
- * @version Nov 10, 2026
+ * @version Nov 18, 2026
  */
 public class PackagePalController
 {
@@ -84,7 +84,10 @@ public class PackagePalController
             return;
         }
 
-        CheckInResult result = mailroom.checkIn(name, packageID);
+        boolean urgent = view.promptPriority();
+
+        CheckInResult result =
+            mailroom.checkIn(name, packageID, urgent);
 
         if (result.getStatus() == CheckInStatus.ADDED)
         {

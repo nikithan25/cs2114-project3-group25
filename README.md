@@ -2,11 +2,17 @@
 
 **Deliverable 4**: 
 
+**How to Run**
+
+Run PackagePalApp.java as a Java application to start the full program.
+
+To run the automated tests, run the JUnit test classes under test/packagepal.model. The main test classes are PickupQueueTest, MailroomTest, PackageTest, PickupRequestTest, and CheckInResultTest.
+
 **1. Reflection**
 
 **How the Design Absorbed the Change:**
 
-Our feature was to add priority handling. So, to do that, we had to edit the PickupRequest, PickupQueue, and Mailroom classes. Comparing this to the next steps, the things that matched were that PickupRequest and PickupQueue needed to be changed to implement this priority handling feature, but one thing that surprised us was that Mailroom also needed to be changed. 
+Our feature was to add priority handling. So, to do that, we had to edit PickupRequest, PickupQueue, Mailroom, ConsoleView, and PackagePalController.. Comparing this to the next steps, the things that matched were that PickupRequest and PickupQueue needed to be changed to implement this priority handling feature, but one thing that surprised us was that Mailroom also needed to be changed. 
 
 The change did not cross the model/view line. The priority logic stayed in the model: PickupRequest stores whether a request is urgent, PickupQueue decides where an urgent request goes with enqueuePriority, and Mailroom picks between enqueue and enqueuePriority. The view never decides the order of the line. It only passes along whether a student said their pickup is urgent.
 
@@ -20,7 +26,7 @@ Field location: D3 said the priority field could go on PickupRequest or Package.
 
 Re-checking in as urgent: A student who is already waiting and checks in again as urgent gets ALREADY_WAITING and stays where they are. We decided students shouldn’t be able to jump the line by checking in a second time.
 
-Tests: We wrote JUnit tests for the priority feature using student.TestCase. They’re in PriorityTestDriver in the model package, matching how our other test drivers are organized by package. They cover an urgent request in an empty queue, urgent requests going ahead of normal ones, multiple urgent requests staying in order, processing order, an all-normal queue still behaving FIFO, the lastPriority pointer resetting after a dequeue, and bad input for the new feature. 
+Tests: We added actual JUnit test classes under test/packagepal.model. These cover the core Queue and model methods, bad-input cases, and the new priority feature. PickupQueueTest also tests order after interleaved enqueue and dequeue operations for the Exceeds requirement.
 
 
 **What Doesn't Work Yet:**
@@ -69,11 +75,31 @@ ConsoleView.java — Zenoor — Wrote the new methods for priority handling feat
 
 ConsoleViewTestDriver.java - Zenoor - Wrote tests for the new ConsoleView priority methods; GenAI assisted; group reviewed 
 
+Package.java — Nikitha — Wrote original model class; GenAI-assisted; group reviewed.
+
+PackageStatus.java — Nikitha — Wrote package status enum; GenAI-assisted; group reviewed.
+
+CheckInResult.java — Nikitha — Wrote model result class; GenAI-assisted; group reviewed.
+
+CheckInStatus.java — Nikitha — Wrote check-in status enum; GenAI-assisted; group reviewed.
+
+PackagePalApp.java — Colin — Wrote application entry point and integration support; GenAI-assisted.
+
+PackagePalModelDriver.java — Colin — Wrote model-only driver; GenAI-assisted.
+
 PackagePalController.java — Colin — Wrote the new methods for priority handling feature; GenAI-assisted.
 
 README.md — Group — Drafted and revised collaboratively; GenAI-assisted.
 
-Remaining Tests - Colin - Wrote tests for the bad-input features and the new methods in PackagePalController; GenAI-assisted; group reviewed 
+PickupQueueTest.java — Colin — Wrote JUnit tests for Queue behavior, bad input, priority order, and interleaved enqueue/dequeue operations; GenAI-assisted; group reviewed.
+
+PackageTest.java — Colin — Wrote JUnit tests for package creation, getters, status changes, and invalid input; GenAI-assisted; group reviewed.
+
+PickupRequestTest.java — Colin — Wrote JUnit tests for normal and urgent requests and invalid input; GenAI-assisted; group reviewed.
+
+CheckInResultTest.java — Colin — Wrote JUnit tests for check-in results and invalid status input; GenAI-assisted; group reviewed.
+
+MailroomTest.java — Colin — Wrote JUnit tests for check-in behavior, priority handling, processing, positions, markReady, and bad input; GenAI-assisted; group reviewed.
 
 **GenAI Note:**
 
