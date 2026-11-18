@@ -105,4 +105,30 @@ public class ConsoleView
         System.out.println();
         System.out.println("Error: " + message);
     }
+    
+
+    /**
+     * Asks whether a pickup should have priority.
+     *
+     * @return true if priority, false otherwise
+     */
+    public boolean promptPriority()
+    {
+        while (true)
+        {
+            String answer =
+                prompt("Priority pickup? (yes/no): ").trim();
+    
+            if (answer.equalsIgnoreCase("yes"))
+            {
+                return true;
+            }
+            else if (answer.equalsIgnoreCase("no"))
+            {
+                return false;
+            }
+    
+            showError("Please enter yes or no.");
+        }
+    }
 }
